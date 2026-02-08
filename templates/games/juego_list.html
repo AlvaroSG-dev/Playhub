@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Catálogo de Juegos - PlayHub{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="bi bi-joystick"></i> Catálogo de Juegos</h1>
+        <p class="text-muted">Explora nuestra colección de juegos</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'games:juego_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Agregar Juego
+        </a>
+    </div>
+</div>
+
+{% if juegos %}
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for juego in juegos %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ juego.titulo }}</h5>
+                <p class="card-text">
+                    <span class="badge bg-primary">{{ juego.plataforma }}</span>
+                </p>
+                <p class="card-text">
+                    <strong class="text-success">${{ juego.precio }}</strong>
+                </p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        <i class="bi bi-calendar"></i> {{ juego.fecha_lanzamiento|date:"d/m/Y" }}
+                    </small>
+                </p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+                <div class="btn-group w-100" role="group">
+                    <a href="{% url 'games:juego_detail' juego.pk %}" class="btn btn-sm btn-outline-light">
+                        <i class="bi bi-eye"></i> Ver
+                    </a>
+                    <a href="{% url 'games:juego_update' juego.pk %}" class="btn btn-sm btn-outline-warning">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="{% url 'games:juego_delete' juego.pk %}" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1">Primera</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+        </li>
+        {% endif %}
+
+        <li class="page-item active">
+            <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% else %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> No hay juegos en el catálogo todavía.
+    <a href="{% url 'games:juego_create' %}" class="alert-link">¡Agrega el primero!</a>
+</div>
+{% endif %}
+{% endblock %}
